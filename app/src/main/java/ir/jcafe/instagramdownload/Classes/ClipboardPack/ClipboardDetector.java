@@ -10,25 +10,28 @@ import ir.jcafe.instagramdownload.Classes.GlobalValidator;
 import ir.jcafe.instagramdownload.Classes.Services.IGDService;
 import ir.jcafe.instagramdownload.R;
 
-/**
- * Created by hp on 6/19/2017.
- */
-
 public class ClipboardDetector {
+
+    private static ClipboardDetector singletone;
+
+    public static ClipboardDetector getSingletone(Context context){
+        if(singletone == null)
+         singletone = new ClipboardDetector(context);
+        return singletone;
+    }
 
     private DataBase db;
     private Context context;
     private ClipboardManager manager;
     private ClipboardManager.OnPrimaryClipChangedListener listener;
 
-
-    public ClipboardDetector(Context context,DataBase db){
+    public ClipboardDetector(Context context){
         this.context = context;
         manager = (ClipboardManager) context.getSystemService(Context.CLIPBOARD_SERVICE);
+        this.db = DataBase.getSingletone(context);
 
-        this.db = db;
+        IGDService.autoDownloadStart(context);
     }
-
 
     private void initialListener(){
         listener = new ClipboardManager.OnPrimaryClipChangedListener() {
@@ -39,8 +42,8 @@ public class ClipboardDetector {
                     if(GlobalValidator.IsInstaLink(cValue))
                     {
                         db.addLink(cValue);
-                        IGDService.tryStartAutoDownload(context);
                         Toast.makeText(context,R.string.addtolist,Toast.LENGTH_LONG).show();
+                        IGDService.autoDownloadStart(context);
                     }
 
                 }
@@ -63,6 +66,11 @@ public class ClipboardDetector {
             manager.removePrimaryClipChangedListener(listener);
             listener = null;
         }
+    }
+
+    public boolean isActivate()
+    {
+        return listener != null;
     }
 
     public static String FromClipboard(Context context){

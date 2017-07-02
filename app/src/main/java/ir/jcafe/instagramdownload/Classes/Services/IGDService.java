@@ -1,47 +1,62 @@
 package ir.jcafe.instagramdownload.Classes.Services;
 
 import android.content.Context;
-
 import ir.jcafe.instagramdownload.Classes.ClipboardPack.ClipboardDetector;
-import ir.jcafe.instagramdownload.Classes.DataBase.DataBase;
+import ir.jcafe.instagramdownload.Classes.DownloadPack.DownloadSequence;
 
 public class IGDService {
 
-    private static ClipboardDetector detector;
-    private static DataBase db;
+    private static ClipboardDetector detector = null;
+    private static DownloadSequence downloadSequence = null;
 
-    public static boolean isActivated(){
-        return detector != null || db != null;
+    private static void initialDetector(Context context){
+        if(detector == null)
+            detector = new ClipboardDetector(context);
     }
 
-    private static void start(Context context){
-        if(db == null) {
-            db = new DataBase(context);
-        }
+    private static void initialDownloadSequence(Context context){
+        if(downloadSequence == null)
+            downloadSequence = new DownloadSequence(context, new Runnable() {
+                @Override
+                public void run() {
+                    downloadSequence = null;
+                }
+            });
+    }
 
-        if(detector == null) {
-            detector = new ClipboardDetector(context,db);
+    public static boolean isActivated(Context context){
+        return detector!= null && detector.isActivate();
+    }
+
+    public static void start(Context context){
+        initialDetector(context);
             detector.tryStart();
+
+            autoDownloadStart(context);
+    }
+
+    public static void stop(Context context){
+        if(detector != null) {
+            detector.stop();
+            detector = null;
         }
 
-    }
-
-    public static void tryStartAutoDownload(Context context){
-        //start auto download
-    }
-
-    public static void tryStart(Context context){
-        if(!isActivated()){
-            start(context);
+        if(downloadSequence != null){
+            downloadSequence.cancel(true);
+            downloadSequence = null;
         }
     }
 
-    public static void stop(){
-        detector.stop();
-         detector = null;
-        db.stop();
-         db = null;
+    public static void autoDownloadStart(Context context){
+        initialDownloadSequence(context);
+        if(!downloadSequence.IsRunning()) {
+            try {
+                downloadSequence.execute();
+            }catch(Exception ex){
+                downloadSequence =null;
+                initialDownloadSequence(context);
+                downloadSequence.execute();
+            }
+        }
     }
-
-
 }

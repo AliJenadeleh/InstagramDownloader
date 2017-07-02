@@ -2,9 +2,8 @@ package ir.jcafe.instagramdownload.Classes.DownloadPack;
 
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.net.Uri;
+import android.os.Parcel;
 import android.util.Log;
 
 import java.io.File;
@@ -12,12 +11,12 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
+import java.net.URI;
 import java.net.URL;
+import java.util.List;
 
+import ir.jcafe.instagramdownload.Classes.DataBase.DataBase;
 import ir.jcafe.instagramdownload.Classes.GlobalValidator;
 import ir.jcafe.instagramdownload.Classes.StoragePreference;
 
@@ -35,6 +34,10 @@ public class DownloadBase {
     }
 
     String content;
+    int description_id;
+
+    private final int Buffer_Size = 1024;
+
     private final static String sharedDataTag = "window._sharedData";
     private final static String sharedEndTag = ";</script>";
 
@@ -44,10 +47,8 @@ public class DownloadBase {
     private final static String Type_Sidecar = "GraphSidecar";
     private final static String DisplayURL_Tag = "display_url";
     private final static String VideoURL_Tag = "video_url";
+    private final static String Description_Tag = "text";
     private final static String Sidecar_Chilren_Tag = "edge_sidecar_to_children";
-
-    private final static String Image_Folder_Name = "IGImages";
-    private final static String Video_Folder_Name = "IGVideos";
 
 
     private String GetContent(String link) throws IOException {
@@ -127,6 +128,9 @@ public class DownloadBase {
             inx++;
         }while(f.exists());
 
+        if(f.exists())
+            f.delete();
+
          SetMediaIndex(isVideo,inx);
         Log.i("axFilePath",f.getAbsolutePath());
 
@@ -138,16 +142,16 @@ public class DownloadBase {
         String path = android.os.Environment.getExternalStorageDirectory().getAbsolutePath();
 
         if(isVideo){
-            path += "/" + Video_Folder_Name + "/";
+            path += "/" + GlobalValidator.Video_Folder_Name + "/";
         }else{
-            path += "/" + Image_Folder_Name + "/";
+            path += "/" + GlobalValidator.Image_Folder_Name + "/";
         }
 
         File f = new File(path);
 
         Log.i("axBasePath",path);
 
-        if(f.isDirectory() & !f.exists())
+        if(!f.exists())
             f.mkdir();
 
         return GetFilePath(path,extension,isVideo);
@@ -165,73 +169,52 @@ public class DownloadBase {
         context.sendBroadcast(intent);
     }
 
+    private void addFileToDB(File f,boolean isVideo){
+        Log.i("put to file start",f.getName());
+        String name = f.getName();
+        DataBase.getSingletone(context).addFile(name,description_id,isVideo);
+        Log.i("put to file done",f.getName());
+    }
+
     private boolean DownloadMedia(String link,boolean isVideo){
         boolean result = true;
         String extension = GetExtension(link);
         File out = GetMediaPath(isVideo,extension);
 
-        HttpURLConnection cnn = null;
-        InputStream sr = null;
-        FileOutputStream fo = null;
 
         try {
-            URL url = new URL(link);
-            cnn = (HttpURLConnection) url.openConnection();
 
-            sr = cnn.getInputStream();
+            InputStream istream = new URL(link).openStream();
+
             out.createNewFile();
-            fo = new FileOutputStream(out);
+            FileOutputStream foStream = new FileOutputStream(out);
 
-            byte[] buffer = new byte[1024];
+            byte[] buffer =new byte[Buffer_Size];
             int cnt;
-
-            while((cnt = sr.read(buffer,0,buffer.length))>0){
-                fo.write(buffer,0,cnt);
+            while((cnt = istream.read(buffer,0,Buffer_Size))>0){
+                foStream.write(buffer,0,cnt);
             }
 
-            cnn.disconnect();
-            fo.flush();
+            foStream.flush();
+            foStream.close();
+
+            istream.close();;
 
             SendBroadCast(out);
-        }
-        catch (Exception ex){
-            if(out.exists())
-                out.delete();
+            addFileToDB(out,isVideo);
+
+        } catch (Exception ex){
             ex.printStackTrace();
             result = false;
         }
-        finally {
-            if(sr != null){
-                try{
-                    sr.close();
-                    sr = null;
-                }catch(Exception ex){}
-            }
 
-            if(fo != null){
-                try{
-                    fo.close();
-                    fo = null;
-                }catch(Exception ex){}
-            }
-
-            if(cnn != null){
-                try{
-                    cnn.disconnect();
-                    cnn = null;
-                }catch(Exception ex){}
-            }
-
-        }
-         // add to db
+        // add to db
         return result;
     }
 
     private void SidecarDownload(){
         nextStart  = content.indexOf(Sidecar_Chilren_Tag) + Sidecar_Chilren_Tag.length();
-        ///// TODO: 6/21/2017  Add Download Files to TFiles table
-        ///// TODO: 6/21/2017  Download Description 
-        ///// TODO: 6/21/2017 Add Description to Description table
+
         String cType;
         while(!( cType = GetContentType(nextStart)).isEmpty()){
             String link;
@@ -266,12 +249,22 @@ public class DownloadBase {
         return false;
     }
 
+    private String GetDescription(){
+        return GetJSONValue(Description_Tag);
+    }
+
+    private void addDescriptiontoDB(){
+        String text = GetDescription();
+        description_id = DataBase.getSingletone(context).addDescribe(text);
+    }
+
     public boolean Download(String link) throws IOException{
         boolean result = false;
         if(GlobalValidator.IsInstaLink(link))
         {
              content = GetContent(link);
             if(!content.isEmpty()){
+                addDescriptiontoDB();
                 ParseContent();
 
                 result = true;

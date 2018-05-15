@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="horizontal" android:layout_width="match_parent"
+    android:id="@+id/actionsMain"
+    android:padding="1dp"
+    android:layout_height="wrap_content">
+
+        <Button
+            android:id="@+id/btnDownload"
+            android:textSize="@dimen/MainActionSize"
+            android:backgroundTint="@color/colorSecondary"
+            android:textColor="@color/colorTextPrimary"
+            android:layout_margin="@dimen/MainActionMargin"
+            android:text="@string/download"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="@dimen/MainActionHeight" />
+
+        <ProgressBar
+            android:visibility="gone"
+            android:layout_gravity="center"
+            android:id="@+id/progLoading"
+            style="?android:attr/progressBarStyle"
+            android:indeterminate="false"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1" />
+
+        <Button
+            android:id="@+id/btnAutoDownload"
+            android:backgroundTint="@color/colorSecondary"
+            android:textColor="@color/colorTextPrimary"
+            android:textSize="@dimen/MainActionSize"
+            android:layout_margin="@dimen/MainActionMargin"
+            android:text="@string/autodownload"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="@dimen/MainActionHeight"/>
+</LinearLayout>

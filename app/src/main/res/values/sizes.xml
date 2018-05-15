@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="MainActionSize">35sp</dimen>
+    <dimen name="MainActionMargin">2dp</dimen>
+    <dimen name="MainActionHeight">80dp</dimen>
+    <dimen name="MainActionRadious">15dp</dimen>
+    <dimen name="ImageItemHeight">150dp</dimen>
+    <dimen name="ImageItemWidth">300dp</dimen>
+    <dimen name="ImageItemMargin">6dp</dimen>
+</resources>

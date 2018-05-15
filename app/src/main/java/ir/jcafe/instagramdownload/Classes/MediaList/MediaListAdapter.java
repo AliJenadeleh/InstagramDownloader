@@ -7,12 +7,19 @@ import android.view.ViewGroup;
 
 import java.util.List;
 
+import ir.jcafe.instagramdownload.Classes.Interfaces.RunnableById;
 import ir.jcafe.instagramdownload.R;
 import ir.jcafe.instagramdownload.segments.MediaListFragment;
 
 public class MediaListAdapter extends RecyclerView.Adapter<MediaHolder> {
 
     private List<MediaItem> items;
+
+    private RunnableById showMedia;
+
+    public void setShowMedia(RunnableById showMedia){
+        this.showMedia = showMedia;
+    }
 
     public MediaListAdapter(List<MediaItem> items){
         this.items = items;
@@ -22,7 +29,9 @@ public class MediaListAdapter extends RecyclerView.Adapter<MediaHolder> {
     public MediaHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         LayoutInflater inflater = LayoutInflater.from(parent.getContext());
         View view  = inflater.inflate(R.layout.media_item_card,null);
-        return new MediaHolder(view);
+        MediaHolder holder = new MediaHolder(view);
+        holder.setShowMedia(showMedia);
+        return holder;
     }
 
     @Override

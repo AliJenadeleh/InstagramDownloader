@@ -5,9 +5,16 @@ import ir.jcafe.instagramdownload.Classes.ClipboardPack.ClipboardDetector;
 import ir.jcafe.instagramdownload.Classes.DownloadPack.DownloadSequence;
 
 public class IGDService {
-
-    private static ClipboardDetector detector = null;
-    private static DownloadSequence downloadSequence = null;
+static {
+    itemId = -1;
+    downloadSequence = null;
+    detector = null;
+    hasMoreToShow = false;
+}
+    private static int itemId;
+    private static ClipboardDetector detector;
+    private static DownloadSequence downloadSequence;
+    private static Boolean hasMoreToShow ;
 
     private static void initialDetector(Context context){
         if(detector == null)
@@ -59,4 +66,25 @@ public class IGDService {
             }
         }
     }
+
+    public  static int getItemId(){
+        return itemId;
+    }
+
+    public  static void setItemId(int Id){
+        itemId = Id;
+    }
+
+    public static  void removeItemId(){
+        itemId = -1;
+    }
+
+    public static Boolean HasMoreToShow(){
+        return  IGDService.hasMoreToShow;
+    }
+
+    public static void HasMoreToShow(Boolean value){
+        IGDService.hasMoreToShow = value;
+    }
+
 }

@@ -28,6 +28,10 @@ public class MediaHolder extends RecyclerView.ViewHolder
     private MediaItem item;
     private RunnableById showMedia;
 
+    public void setShowMedia(RunnableById delegate){
+        this.showMedia = delegate;
+    }
+
     public void bind(MediaItem item){
         this.item = item;
         ImageView img = (ImageView) view.findViewById(R.id.imgItem);
@@ -63,9 +67,11 @@ public class MediaHolder extends RecyclerView.ViewHolder
             new Handler().post(new Runnable() {
                 @Override
                 public void run() {
-                    showMedia.run(item.Id);
+                    showMedia.run(item.Id,view.getContext());
+                    //Toast.makeText(view.getContext(),"clicked Me",Toast.LENGTH_SHORT).show();
                 }
             });
         }
+
     }
 }

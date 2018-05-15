@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        app:showAsAction="always"
+        android:id="@+id/menuInstagram"
+        android:title="@string/menuInestagram"
+        android:icon="@drawable/ig32"/>
+
+    <item
+     app:showAsAction="always"
+     android:id="@+id/menuJCafe"
+     android:title="@string/menuJCafe"
+     android:icon="@drawable/jcafe128"/>
+
+    <item
+        app:showAsAction="ifRoom"
+        android:id="@+id/menuTelegram"
+        android:icon="@drawable/telegram128"
+        android:title="@string/menuTelegram"/>
+
+    <item
+        app:showAsAction="never"
+        android:id="@+id/menuExit"
+        android:title="@string/menuExit" />
+</menu>

@@ -83,9 +83,10 @@ public class DataBase {
     }
 
     public int addDescribe(String text){
+
         ContentValues values = new ContentValues();
             values.put("describe",text);
-        db.insert(Table_Description,null,values);
+        db.insert(Table_Description, null, values);
 
         Cursor cursor = db.rawQuery("select last_insert_rowid()",null);
         cursor.moveToFirst();
@@ -137,6 +138,19 @@ public class DataBase {
         return singletone;
     }
 
+    private static String getSrcPath(MediaItem item,String fName){
+
+        String basePath = android.os.Environment.getExternalStorageDirectory() + "/";
+
+        if(item.isVideo) {
+            return basePath + "/" +
+                    GlobalValidator.Video_Folder_Name + "/" + fName;
+        }else{
+            return basePath + "/" +
+                    GlobalValidator.Image_Folder_Name + "/" + fName;
+        }
+    }
+
     public ArrayList<MediaItem> GetMediaList(){
         String cmd = "select [id],[fname],[isvideo] from [" +Table_Files+"] order by [id] desc";
         Cursor cursor = db.rawQuery(cmd,null);
@@ -147,7 +161,7 @@ public class DataBase {
             int inxIsVideo = cursor.getColumnIndex("isvideo");
             int inxFile =  cursor.getColumnIndex("fname");
             int inxId = cursor.getColumnIndex("id");
-            String basePath = android.os.Environment.getExternalStorageDirectory() + "/";
+            //String basePath = android.os.Environment.getExternalStorageDirectory() + "/";
 
             do{
 
@@ -156,6 +170,8 @@ public class DataBase {
                 item.isVideo = (t.equals("1"))?true:false;
                 item.Id = cursor.getInt(inxId);
 
+                item.Src = getSrcPath(item,cursor.getString(inxFile));
+                /*
                 if(item.isVideo) {
                     item.Src = basePath + "/" +
                             GlobalValidator.Video_Folder_Name + "/" + cursor.getString(inxFile);
@@ -163,6 +179,7 @@ public class DataBase {
                     item.Src = basePath + "/" +
                             GlobalValidator.Image_Folder_Name + "/" + cursor.getString(inxFile);
                 }
+                */
                 items.add(item);
             }while(cursor.moveToNext());
 
@@ -185,7 +202,7 @@ public class DataBase {
             int inxId = cursor.getColumnIndex("id");
             String basePath = android.os.Environment.getExternalStorageDirectory() + "/";
 
-
+                result = new MediaItem();
                 String t = cursor.getString(inxIsVideo);
                 result.isVideo = (t.equals("1"))?true:false;
                 result.Id = cursor.getInt(inxId);
@@ -201,5 +218,41 @@ public class DataBase {
         }
 
         return result;
+    }
+
+    private int getDescribeId(int fileId){
+        String cmd = "select [describeID] from [" +Table_Files+"] where id=" + fileId;
+        Cursor cursor = db.rawQuery(cmd,null);
+        if(cursor.getCount() > 0) {
+            cursor.moveToFirst();
+            return cursor.getInt(0);
+        }
+        return -1;
+    }
+
+    public String GetDescription(int Id){
+        String result = "";
+        int describeId = getDescribeId(Id);
+        if(describeId > -1){
+            String cmd = "select [describe] from [" + Table_Description
+                                                        + "] where [id]=" + describeId;
+            Cursor cursor = db.rawQuery(cmd,null);
+            if(cursor.getCount() > 0){
+                cursor.moveToFirst();
+                return cursor.getString(0);
+            }
+        }
+        return result;
+    }
+
+    public void deleteFile(int fileId){
+        int descId = getDescribeId(fileId);
+        String cmd;
+        if(descId > -1){
+            cmd = "delete from [" + Table_Description + "] where id=" + descId ;
+            db.execSQL(cmd);
+        }
+        cmd = "delete from [" + Table_Files + "] where id=" + fileId;
+        db.execSQL(cmd);
     }
 }

@@ -1,0 +1,27 @@
+<resources>
+    <string name="app_name">InstagramDownload</string>
+    <string name="appTitle">اینستادانلود</string>
+    <string name="menuShare">اشتراک</string>
+    <string name="menuInestagram">اینستاگرام</string>
+    <string name="menuJCafe">JCafe</string>
+    <string name="menuExit">خروج</string>
+    <string name="menuTelegram">کانال تلگرام</string>
+    <string name="download">&#xf019;</string>
+    <string name="autodownload">&#xf076;</string>
+    <string name="addtolist">لینک به لیست دانلود اضافه شد</string>
+    <string name="autodownloadstart">دانلود خودکار فعال شد</string>
+    <string name="autodownloadstop">دانلود خودکار متوقف شد</string>
+    <string name="downloadstart">دانلود آغاز شد</string>
+    <string name="downloadlist">لیست دانلود</string>
+    <string name="error">خطا رخ داده است</string>
+    <string name="successful">فایل مورد نظر با موفقیت دانلود شد</string>
+    <string name="nolink">ابتدا لینک مورد نظر را کپی کنید</string>
+    <string name="nocomment">نظری ثبت نشده است</string>
+    <string name="tryexit">برای خروچ مجددا گزینه بازگشت را انتخاب کنید</string>
+    <string name="btnRemove">حذف</string>
+    <string name="fileremoved">فایل مورد نظر با موفقت حذف شد</string>
+    <string name="alertTitle">هشدار</string>
+    <string name="alertDelMessage">آیا از حذف این مورد اطمینان دارید ؟</string>
+    <string name="alertNegative">خیر</string>
+    <string name="alertPosetive">بله</string>
+</resources>

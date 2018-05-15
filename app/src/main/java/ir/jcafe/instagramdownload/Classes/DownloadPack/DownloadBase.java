@@ -20,10 +20,6 @@ import ir.jcafe.instagramdownload.Classes.DataBase.DataBase;
 import ir.jcafe.instagramdownload.Classes.GlobalValidator;
 import ir.jcafe.instagramdownload.Classes.StoragePreference;
 
-/**
- * Created by hp on 6/19/2017.
- */
-
 public class DownloadBase {
 
     private int nextStart;
@@ -181,7 +177,6 @@ public class DownloadBase {
         String extension = GetExtension(link);
         File out = GetMediaPath(isVideo,extension);
 
-
         try {
 
             InputStream istream = new URL(link).openStream();
@@ -250,11 +245,14 @@ public class DownloadBase {
     }
 
     private String GetDescription(){
-        return GetJSONValue(Description_Tag);
+        String tmp = GetJSONValue(Description_Tag);
+        //Log.i("JCafeir",tmp);
+        return tmp;
     }
 
     private void addDescriptiontoDB(){
         String text = GetDescription();
+        Log.i("JCafeir",text);
         description_id = DataBase.getSingletone(context).addDescribe(text);
     }
 

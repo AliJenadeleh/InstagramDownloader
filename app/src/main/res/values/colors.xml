@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#fafcec</color>
+    <color name="colorSecondary">#dadadc</color>
+    <color name="colorPrimaryDark">#313131</color>
+    <color name="colorAccent">#FF3D00</color>
+    <color name="colorAcivated">#367b35</color>
+    <color name="colorRipple">@color/colorAccent</color>
+    <color name="colorBackground">@color/colorPrimary</color>
+    <color name="colorNavigation">@color/colorPrimaryDark</color>
+    <color name="colorTextPrimary">@color/colorPrimaryDark</color>
+    <color name="colorDanger">#940505</color>
+</resources>
